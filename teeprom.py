@@ -41,6 +41,6 @@ async def teeworlds_mastersrv_count():
 	complete, pending = await asyncio.wait(queries, timeout=2)
 	for task in pending:
 		task.cancel()
-	return [q.result() for q in complete if not q.exception()]
+	return [q.result() for q in complete if not q.exception() and q.result() is not None]
 
 prom.serve()
