@@ -30,7 +30,7 @@ class ClientProtocol:
 		self.connected = False
 		try:
 			while True:
-				fut = self.conn.recvers.get_nowait()
+				fut = self.recvers.get_nowait()
 				fut.cancel()
 		except asyncio.QueueEmpty:
 			pass
@@ -56,6 +56,9 @@ class UdpConnection:
 
 	async def recv(self):
 		return await self.protocol.recv()
+
+	def close(self):
+		self.transport.close()
 
 
 async def connect(host, port, loop=None):
