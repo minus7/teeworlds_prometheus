@@ -5,6 +5,7 @@ import asyncio
 import prom
 import udpconn
 from struct import unpack
+from socket import gaierror
 import logging
 
 logging.basicConfig(format="[%(asctime)s] %(levelname)s: %(pathname)s:%(funcName)s(%(lineno)s): %(message)s", level=logging.DEBUG)
@@ -22,6 +23,11 @@ async def query_master(server):
 		return (count, {'server': server})
 	except asyncio.CancelledError:
 		L.warn("Query to {} cancelled".format(server))
+	except gaierror as e:
+		if e.errno == -2:
+			L.debug("Query to {} failed: no such master".format(server))
+		else:
+			raise
 	except:
 		L.exception("Query to {} raised".format(server))
 		raise
